@@ -57,10 +57,26 @@ The rule was checked against nearby February structures so it does not become
 | Signal date | High core | Same-theme <=3-board A-level handoff | Rule action | Diagnostic outcome |
 |---|---|---|---|---|
 | 2026-02-06 | `603616.SH` | none confirmed | do not trigger | high core `+5.882353%` on the same return protocol |
-| 2026-02-09 | `603616.SH` / `300912.SZ` / `002506.SZ` | `003018.SZ` is a possible handoff, but its T+1 auction is missing | low-front path remains frozen; no high-core fallback | high core was `-10.111111%`; case is also a data-quality/auction-coverage test |
+| 2026-02-09 | `603616.SH` / `300912.SZ` / `002506.SZ` | `003018.SZ` is a possible handoff, but its T+1 auction fails; `300912.SZ` is strong but remains downgraded | skip the low front and do not fall back to the high core | high core was `-10.111111%`; the Challenger correctly produces no trade |
 | 2026-02-24 | `001896.SZ` / `605033.SH` | no confirmed same-theme A-level low front | do not trigger | `001896.SH` was `+5.142857%`; no forced downgrade |
 
 The 2026-02-09 row is not counted as an economic win or loss for this
-Challenger because the relevant low-front auction fact is unavailable. It is
-retained to verify that missing auction data leads to waiting rather than an
-implicit fallback to a candidate the rule deliberately demoted.
+Challenger because the low-front candidate failed the T+1 auction gate. The
+high core is retained only as an observation, so a strong high-core auction
+cannot silently bypass the upstream handoff rule.
+
+## Current machine-readable replay slice
+
+`replay_challenger_repair_day_low_front_2026-02.jsonl` now contains four
+February cases. Three have complete prices and one is explicitly
+unverifiable:
+
+- computable trades: `3`
+- simple return sum: `21.028757%`
+- average trade return: `7.009586%`
+- win rate: `100%`
+- non-executed after auction failure: `1`
+
+This is a development slice, not the February baseline. It proves the rule's
+branches and timing fields are executable; it does not yet prove general
+profitability or optimality across all 14 February signal dates.

@@ -54,5 +54,10 @@
     "full_series_pairs": 861
   },
   "worker_cap": 2,
-  "return_prices_not_fetched": true
+  "return_prices_not_fetched": true,
+  "summary_rows_current": 925,
+  "process_rows_current": 144351,
+  "full_series_pairs_current": 925,
+  "missing_pairs_current": 0,
+  "diagnostic_scope": "includes targeted T+2 pairs for the repair-day Challenger; these do not create decisions"
 }

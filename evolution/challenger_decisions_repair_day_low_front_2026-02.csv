@@ -1,0 +1,5 @@
+signal_date,candidate,code,executed,execution_status
+2026-02-03,002830.SZ,002830.SZ,true,executed
+2026-02-06,603616.SH,603616.SH,true,executed
+2026-02-09,,,false,not_executed
+2026-02-24,001896.SZ,001896.SZ,true,executed

@@ -1,0 +1,5 @@
+signal_date,candidate,code,executed,execution_status,t1_date,t2_date,t1_open_buy_price,t2_auction_sell_price,return_pct,status
+2026-02-03,002830.SZ,002830.SZ,True,executed,2026-02-04,2026-02-05,28.19,31.01,10.003547357218867,computed
+2026-02-06,603616.SH,603616.SH,True,executed,2026-02-09,2026-02-10,8.5,9.0,5.882352941176472,computed
+2026-02-09,,NAN,False,not_executed,2026-02-10,2026-02-11,,,,not_executed
+2026-02-24,001896.SZ,001896.SZ,True,executed,2026-02-25,2026-02-26,10.5,11.04,5.142857142857138,computed
