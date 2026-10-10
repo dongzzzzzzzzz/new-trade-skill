@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_residual_extreme_loss_repair_2026-06.csv",
+  "signal_dates": 21,
+  "computed_trades": 8,
+  "not_executed": 13,
+  "simple_return_sum_pct": 26.698641321089397,
+  "average_trade_return_pct": 3.3373301651361746,
+  "win_rate": 0.75,
+  "compounded_return_pct": 29.07822909490927,
+  "max_sequential_equity_drawdown_pct": -3.7398373983739908
+}
