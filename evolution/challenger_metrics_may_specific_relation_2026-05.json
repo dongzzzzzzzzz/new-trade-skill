@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_may_specific_relation_2026-05.csv",
+  "signal_dates": 18,
+  "computed_trades": 5,
+  "not_executed": 13,
+  "simple_return_sum_pct": 9.0194866080463,
+  "average_trade_return_pct": 1.80389732160926,
+  "win_rate": 0.6,
+  "compounded_return_pct": 8.971269403607884,
+  "max_sequential_equity_drawdown_pct": -2.012913026965424
+}
