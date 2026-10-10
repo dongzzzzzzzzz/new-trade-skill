@@ -19,7 +19,13 @@ def main() -> None:
     trades = data[data["status"].eq("computed")].copy()
     returns = pd.to_numeric(trades["return_pct"], errors="coerce").dropna()
     equity = (1.0 + returns / 100.0).cumprod()
-    drawdown = equity / equity.cummax() - 1.0 if not equity.empty else pd.Series(dtype=float)
+    if equity.empty:
+        drawdown = pd.Series(dtype=float)
+    else:
+        # Include starting capital so an initial losing trade is counted as a
+        # drawdown instead of becoming the artificial first equity peak.
+        equity_with_start = pd.concat([pd.Series([1.0]), equity], ignore_index=True)
+        drawdown = equity_with_start / equity_with_start.cummax() - 1.0
     result = {
         "source": str(args.returns),
         "signal_dates": int(len(data)),

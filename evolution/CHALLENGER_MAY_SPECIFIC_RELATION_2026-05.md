@@ -31,7 +31,7 @@ the direct candidates are all untradeable, the result can be no trade.
 | Simple return sum | `-4.510361%` | `+9.019487%` |
 | Win rate | `33.333333%` | `60%` |
 | Compounded return | `-5.257891%` | `+8.971269%` |
-| Maximum drawdown | `-10.706463%` | `-2.012913%` |
+| Maximum drawdown | `-12.159634%` | `-3.363068%` |
 
 The `2026-05-07` execution changes from `600673.SH` (`-6.233948%`) to
 `603158.SH` (`+0.253646%`). The `2026-05-19` broad follower is removed, so

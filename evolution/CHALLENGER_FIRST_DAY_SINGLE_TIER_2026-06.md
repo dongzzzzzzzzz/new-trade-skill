@@ -27,7 +27,7 @@ facts establish advancement, ladder expansion, or leader-driven response.
 | Simple return sum | `+14.863237%` | `+23.310380%` |
 | Win rate | `66.666667%` | `75%` |
 | Compounded return | `+14.015172%` | `+24.534804%` |
-| Maximum drawdown | `-8.447142%` | `-2.174167%` |
+| Maximum drawdown | `-8.447142%` | `-7.128099%` |
 
 Only `2026-06-15` changes. The formal queue
 `600026.SH -> 601872.SH -> 601975.SH` becomes observation-only and no trade is
