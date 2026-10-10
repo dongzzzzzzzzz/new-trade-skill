@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_repair_high_gap_2026-04.csv",
+  "signal_dates": 21,
+  "computed_trades": 11,
+  "not_executed": 10,
+  "simple_return_sum_pct": 4.866605704542545,
+  "average_trade_return_pct": 0.44241870041295867,
+  "win_rate": 0.5454545454545454,
+  "compounded_return_pct": 0.8668493563832147,
+  "max_sequential_equity_drawdown_pct": -27.20190514255263
+}

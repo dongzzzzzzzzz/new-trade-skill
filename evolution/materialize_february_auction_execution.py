@@ -62,6 +62,23 @@ def weak_repair_last_minute_spike(
     )
 
 
+def repair_high_gap_overextension(
+    environment_state: str,
+    role: str,
+    board_count: int,
+    queue_rank: int,
+    open_gap_pct: float,
+) -> bool:
+    """Reject high-premium non-core front candidates during plain repair."""
+    return (
+        environment_state == "修复"
+        and role != "市场核心"
+        and board_count >= 3
+        and queue_rank <= 2
+        and open_gap_pct >= 5.0
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, default=INPUT)
@@ -94,7 +111,7 @@ def main() -> None:
 
         auction_records = []
         executable = []
-        for code in item["original_queue"]:
+        for queue_rank, code in enumerate(item["original_queue"], 1):
             raw = lookup.get((item["auction_date"], code))
             if raw is None:
                 auction_records.append(
@@ -119,6 +136,9 @@ def main() -> None:
             close_rows = facts[(facts["date"] == item["signal_date"]) & facts["thscode"].eq(code)]
             close_price = float(close_rows.iloc[0]["close"])
             stock_name = str(close_rows.iloc[0]["stock_name"])
+            node_row = next(
+                node for node in item.get("node_role_records", []) if node["candidate"] == code
+            )
             gap = (open_price / close_price - 1.0) * 100.0
             drift = (float(raw["auction_price_0924"]) / float(raw["auction_price_0920"]) - 1.0) * 100.0
             limit_up_price = theoretical_limit_up(close_price, code, stock_name)
@@ -127,6 +147,7 @@ def main() -> None:
                 for price in (raw["auction_price_0920"], raw["auction_price_0924"], open_price)
             )
             role = str(tday_row.get("role", ""))
+            board_count = int(float(node_row.get("board_count", 0) or 0))
             high_volatility_auction_decay = (
                 daily_limit_ratio(code, stock_name) >= Decimal("0.20")
                 and matches_exchange_price(float(raw["auction_price_0920"]), limit_up_price)
@@ -143,10 +164,18 @@ def main() -> None:
                 float(raw["auction_price_0924"]),
                 open_price,
             )
+            repair_high_gap = repair_high_gap_overextension(
+                str(item.get("environment_state", "")),
+                role,
+                board_count,
+                queue_rank,
+                gap,
+            )
             survives = (
                 not limit_open_untradeable
                 and not high_volatility_auction_decay
                 and not weak_repair_spike
+                and not repair_high_gap
                 and gap >= -2.0
                 and float(raw["open_volume_hands"]) > 0
                 and drift > -8.0
@@ -156,6 +185,8 @@ def main() -> None:
             elif high_volatility_auction_decay:
                 status = "不及预期"
             elif weak_repair_spike:
+                status = "不及预期"
+            elif repair_high_gap:
                 status = "不及预期"
             elif gap >= 5.0:
                 status = "超预期"
@@ -177,6 +208,7 @@ def main() -> None:
                     "limit_open_untradeable": limit_open_untradeable,
                     "high_volatility_auction_decay": high_volatility_auction_decay,
                     "weak_repair_last_minute_spike": weak_repair_spike,
+                    "repair_high_gap_overextension": repair_high_gap,
                     "decision": "保留并执行" if survives else "跳过并递补",
                     "reason": (
                         "竞价可成交且未破坏T日买入前提"
@@ -187,6 +219,8 @@ def main() -> None:
                         if high_volatility_auction_decay
                         else "弱修复中的非市场核心在9:24后末分钟急拉且高开，按竞价虚强处理"
                         if weak_repair_spike
+                        else "修复环境中非市场核心3板以上且队列前两位高开至少5%，按高位溢价过度处理"
+                        if repair_high_gap
                         else "竞价跌破失效边界"
                     ),
                 }

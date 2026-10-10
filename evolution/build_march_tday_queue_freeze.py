@@ -105,7 +105,7 @@ def main() -> None:
 
         records.append(
             {
-                "case_id": f"{date.replace('-', '')}-current-skill-march",
+                "case_id": f"{date.replace('-', '')}-current-skill-{date[:7]}",
                 "signal_date": date,
                 "data_cutoff": f"{date} 15:00 Asia/Shanghai",
                 "environment_state": environment,
@@ -167,7 +167,7 @@ def main() -> None:
         for item in records
     ]
     with OUTPUT_CSV.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
