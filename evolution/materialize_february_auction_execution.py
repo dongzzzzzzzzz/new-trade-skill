@@ -27,10 +27,13 @@ def main() -> None:
     parser.add_argument("--input", type=Path, default=INPUT)
     parser.add_argument("--output", type=Path, default=OUTPUT_JSONL)
     parser.add_argument("--decisions", type=Path, default=OUTPUT_CSV)
+    parser.add_argument("--facts", type=Path, default=ROOT / "replay_inputs_2026-02.csv")
+    parser.add_argument("--auction-summary", type=Path, default=AUCTION)
     args = parser.parse_args()
     records = [json.loads(line) for line in args.input.read_text(encoding="utf-8").splitlines() if line.strip()]
+    facts = pd.read_csv(args.facts, usecols=["date", "thscode", "close"])
     auction = pd.read_parquet(
-        AUCTION,
+        args.auction_summary,
         columns=[
             "trade_date",
             "stock_code",
@@ -73,7 +76,6 @@ def main() -> None:
             # evidence text, so use the queue's source-independent open gap
             # gate from the auction cache against the previous close supplied
             # by the frozen replay input through a direct lookup below.
-            facts = pd.read_csv(ROOT / "replay_inputs_2026-02.csv", usecols=["date", "thscode", "close"])
             close_rows = facts[(facts["date"] == item["signal_date"]) & facts["thscode"].eq(code)]
             close_price = float(close_rows.iloc[0]["close"])
             gap = (open_price / close_price - 1.0) * 100.0

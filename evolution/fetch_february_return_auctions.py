@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import argparse
 from bisect import bisect_right
 from pathlib import Path
 
@@ -29,8 +30,12 @@ def load_helper():
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, default=INPUT)
+    parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
+    args = parser.parse_args()
     helper = load_helper()
-    records = [json.loads(line) for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip()]
+    records = [json.loads(line) for line in args.input.read_text(encoding="utf-8").splitlines() if line.strip()]
     bars = pd.read_parquet(KLINES, columns=["date"])
     trade_dates = sorted(pd.to_datetime(bars["date"]).dt.normalize().drop_duplicates().tolist())
     requests: set[tuple[str, str]] = set()
@@ -50,9 +55,9 @@ def main() -> None:
         "auction_max_pages": 5,
     }
     summary, process, metadata = helper.load_or_fetch_auctions(
-        sorted(requests), OUTPUT_DIR, config, refresh=False
+        sorted(requests), args.output_dir, config, refresh=False
     )
-    manifest_path = OUTPUT_DIR / "manifest.json"
+    manifest_path = args.output_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
     manifest.update(
         {

@@ -1,0 +1,4 @@
+signal_date,selected_code,return_pct,auction_result,primary_layer,diagnosis,diagnostic_alternatives
+2026-03-09,000815.SZ,-4.418727,passed,node_role/original_queue,"3-board continuation ranked above the earlier 2-board active front inside the compute-electric theme","002261.SZ:-1.518387;601789.SH:+3.614458"
+2026-03-12,000537.SZ,-11.337209,passed,node_role/candidate_pool,"Same-board green-energy fronts were not differentiated well enough under weak breadth","600726.SH:+2.380952;002150.SZ:+2.606061;601016.SH:-4.555315"
+2026-03-30,603538.SH,-6.982033,passed,environment_sentiment/node_role,"Non-market-core 5-board continuation remained ahead of active same-theme 2-board fronts during dual divergence","002038.SZ:+8.076358;600488.SH:+15.430862;600513.SH:+1.525054"

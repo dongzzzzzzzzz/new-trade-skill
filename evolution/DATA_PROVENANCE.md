@@ -11,9 +11,11 @@
 - `data/capital_profit_path_replay_v3/auction_summary.parquet`：竞价开盘价和数据质量字段，覆盖 2026-01-06 至 2026-02-02。
 - `evolution/index_facts_2026-01.json`：通过东方财富 `push2his` 历史 K 线接口抓取的上证指数、深证成指和创业板指日线事实；保存接口 URL、字段和抓取时间。
 - `evolution/index_facts_2026-02.json`：通过腾讯 `web.ifzq.gtimg.cn/appstock/app/fqkline/get` 公共历史 K 线接口抓取的上证指数、深证成指和创业板指日线事实；保存接口 URL、字段和抓取时间。
+- `evolution/index_facts_2026-03.json`：同一腾讯公共历史 K 线接口的三月指数事实；指数成交字段仍明确标记为成交量代理，不能冒充指数成交额。
 - `evolution/auction_cache_2026-02/auction_summary.parquet` 与 `auction_process.parquet`：使用 `eltdx==3.1.1` 专用历史行情主站池，按 `09:15:00` 至 `09:25:00` 过程和 `09:25` 正式撮合口径抓取二月候选的竞价事实；首轮 T+1 范围覆盖 861 个股票/日期对，2026-02-02 至 2026-02-27 信号日对应的 2026-02-03 至 2026-03-02 竞价日，全部为 `full_series`。另有 57 个 2026-02-05 诊断对，用于审计 2026-02-03 的候选生成失败，不得当作已冻结决策输入。
+- `evolution/auction_cache_2026-03/auction_summary.parquet` 与 `auction_process.parquet`：同一 `eltdx==3.1.1` 口径的三月 T+1 竞价事实；1233 个涨停候选/日期对中 1230 个为 `full_series`，3 个明确标记为 `missing`。冻结执行候选后另抓实际交易的 T+2 卖出价；失败诊断对单独写入 manifest，不得回流 T 日队列。
 
-二月指数文件的 `index_amount_*` 字段使用腾讯接口返回的指数成交量代理值，不是成交额。二月市场宽度和个股成交额仍来自本地股票日线事实；任何依赖指数成交额绝对值的规则在该窗口不得被宣称已验证。
+二月和三月指数文件的 `index_amount_*` 字段使用腾讯接口返回的指数成交量代理值，不是成交额。市场宽度和个股成交额仍来自本地股票日线事实；任何依赖指数成交额绝对值的规则在这些窗口不得被宣称已验证。
 
 ## 不得直接作为目标 skill 结论的输入
 
