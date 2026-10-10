@@ -266,6 +266,12 @@ description: |
 - 每只候选的买入前提、失效条件和不做原因；
 - T+1 开盘买入、T+2 竞价卖出的验证标记。
 
+验证记录必须使用结构化字段，不能只写“盈利/亏损”或“次日表现不错”：
+
+`signal_date | candidate | original_rank | auction_status | executed | T+1_open_buy_price | T+2_auction_sell_price | return_pct`
+
+其中 `return_pct = (T+2_auction_sell_price / T+1_open_buy_price - 1) * 100`。一字不可成交、竞价剔除、空仓和数据缺失也必须保留记录，并把 `executed=false`、原因和缺失字段写清楚；不能用 T+1 收盘价、T+1 盘中高点或 T+2 之后价格替代卖出价。
+
 不要把“盘后看好”“竞价保留观察”“实际买入”三个状态混写成一个结论。
 
 ## 通用回答工作流

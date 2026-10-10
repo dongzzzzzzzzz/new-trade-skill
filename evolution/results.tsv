@@ -4,3 +4,4 @@ round	base	challenger	step	judge_votes	status	note
 3	ba3dc02	c66e8e8	environment_conflict_resolution	better=3,worse=0,tie=0	keep	all judges preferred explicit precedence but only by a slight margin; stop environment hill-climbing and move to sentiment
 4	c66e8e8	65ec7fb	relay_sentiment	better=2,worse=1,tie=0	keep	two judges confirmed five-factor sentiment states; one judge contradicted the visible diff and was treated as noisy; next target is market mode
 5	65ec7fb	15baa17	market_mode	better=3,worse=0,tie=0	keep	all judges preferred separating mode from environment/sentiment; risks were mode-role conflation and qualitative evidence
+6	15baa17	515c766	market_mode_boundary	better=2,worse=0,tie=1	keep	two judges preferred separating market mode from candidate role and removing wait as a mode; one judge could not inspect commits and returned tie
