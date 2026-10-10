@@ -2,3 +2,4 @@ round	base	challenger	step	judge_votes	status	note
 1	8b30a8b	7f8d79a	executable_pipeline	better=2,worse=1,tie=0	keep	paired judges found the after-hours pipeline materially better; one judge produced unrelated-file findings and was treated as a noisy vote, risks retained for next rounds
 2	7f8d79	ba3dc02	environment	better=3,worse=0,tie=0	keep	paired judges agreed that four-factor environment evidence and index-vs-sentiment correction improve executability; overlap between repair/divergence/waiting retained for next challenger
 3	ba3dc02	c66e8e8	environment_conflict_resolution	better=3,worse=0,tie=0	keep	all judges preferred explicit precedence but only by a slight margin; stop environment hill-climbing and move to sentiment
+4	c66e8e8	65ec7fb	relay_sentiment	better=2,worse=1,tie=0	keep	two judges confirmed five-factor sentiment states; one judge contradicted the visible diff and was treated as noisy; next target is market mode
