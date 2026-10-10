@@ -49,9 +49,13 @@ leakage_check
 candidate
 original_rank
 environment_pass
+environment_evidence
 theme_pass
+theme_evidence
 node_pass
+node_evidence
 risk_pass
+risk_evidence
 role
 include_status
 include_or_exclude_reason
