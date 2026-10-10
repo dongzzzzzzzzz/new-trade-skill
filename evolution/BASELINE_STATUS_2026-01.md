@@ -7,15 +7,21 @@ an optimization result and must not be treated as proof of profitability.
 
 | Signal dates | Cases | Executed and computable | Empty/wait | Selected but unverifiable |
 |---|---:|---:|---:|---:|
-| 2026-01-06 to 2026-01-23 | 14 | 8 | 4 | 2 |
+| 2026-01-06 to 2026-01-30 | 19 | 11 | 6 | 2 |
 
-The eight computable trades use the required timing:
+The eleven computable trades use the required timing:
 
 `T+1 open buy -> T+2 09:25 auction sell`
 
-Their simple return sum is `69.82571%`, average return is `8.72821%`, and all
-eight are positive. This sample is still too small to support a performance
-claim or an optimization claim.
+The regenerated metrics are:
+
+- Simple return sum: `70.640454%`
+- Average single-trade return: `6.421859%`
+- Win rate: `81.818182%`
+
+The expanded sample is still too small to support a performance claim or an
+optimization claim. It is now large enough to identify concrete failure cases
+for a first Challenger.
 
 The 2026-01-12 case selected the highest core after a valid T+1 auction, but the
 T+1 daily open and T+2 auction price are missing from the independent raw price
@@ -27,6 +33,12 @@ because broad negative feedback, limit-down expansion, and weak core feedback
 failed the environment and sentiment gates. They are not silently removed from
 the replay.
 
+The 2026-01-26 and 2026-01-30 cases are also recorded as empty/waiting days.
+The index rebound on both dates did not override broad negative feedback,
+limit-down/limit-break expansion, or negative core closing feedback.
+
+See `BASELINE_DIAGNOSTIC_2026-01.md` for the first failure attribution.
+
 ## Replay manifest
 
 The complete January baseline is the union of these files, read in signal-date
@@ -36,9 +48,10 @@ order:
 - `replay_baseline_2026-01_addendum.jsonl`
 - `replay_baseline_2026-01_addendum_2.jsonl`
 - `replay_baseline_2026-01_addendum_3.jsonl`
+- `replay_baseline_2026-01_addendum_4.jsonl`
 
 The addendum files are part of the baseline, not optional notes. Any Challenger
-must replay all 14 cases and regenerate every downstream field when an upstream
+must replay all 19 cases and regenerate every downstream field when an upstream
 step changes.
 
 ## Integrity Checks

@@ -7,5 +7,8 @@ signal_date,candidate,code,executed,execution_status
 2026-01-19,汉缆股份,002498.SZ,true,executed
 2026-01-20,锋龙股份,002931.SZ,true,executed
 2026-01-21,锋龙股份,002931.SZ,true,executed
-2026-01-22,锋龙股份,002931.SZ,false,selected_but_unverifiable_missing_t2_auction
+2026-01-22,白银有色,601212.SH,false,selected_but_unverifiable_missing_t2_auction
 2026-01-23,白银有色,601212.SH,true,executed
+2026-01-27,白银有色,601212.SH,true,executed
+2026-01-28,白银有色,601212.SH,true,executed
+2026-01-29,白银有色,601212.SH,true,executed
