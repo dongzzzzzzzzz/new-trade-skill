@@ -79,6 +79,26 @@ def repair_high_gap_overextension(
     )
 
 
+def repair_20cm_auction_decay(
+    environment_state: str,
+    role: str,
+    code: str,
+    queue_rank: int,
+    open_gap_pct: float,
+    auction_drift_pct: float,
+) -> bool:
+    """Reject repair-day 20cm/30cm front candidates after auction decay."""
+    is_large_limit = code.split(".", 1)[0].startswith(("300", "301", "688", "689"))
+    return (
+        environment_state == "修复"
+        and role != "市场核心"
+        and is_large_limit
+        and queue_rank <= 2
+        and open_gap_pct >= 5.0
+        and auction_drift_pct <= -3.0
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, default=INPUT)
@@ -171,11 +191,20 @@ def main() -> None:
                 queue_rank,
                 gap,
             )
+            repair_20cm_decay = repair_20cm_auction_decay(
+                str(item.get("environment_state", "")),
+                role,
+                code,
+                queue_rank,
+                gap,
+                drift,
+            )
             survives = (
                 not limit_open_untradeable
                 and not high_volatility_auction_decay
                 and not weak_repair_spike
                 and not repair_high_gap
+                and not repair_20cm_decay
                 and gap >= -2.0
                 and float(raw["open_volume_hands"]) > 0
                 and drift > -8.0
@@ -187,6 +216,8 @@ def main() -> None:
             elif weak_repair_spike:
                 status = "不及预期"
             elif repair_high_gap:
+                status = "不及预期"
+            elif repair_20cm_decay:
                 status = "不及预期"
             elif gap >= 5.0:
                 status = "超预期"
@@ -209,6 +240,7 @@ def main() -> None:
                     "high_volatility_auction_decay": high_volatility_auction_decay,
                     "weak_repair_last_minute_spike": weak_repair_spike,
                     "repair_high_gap_overextension": repair_high_gap,
+                    "repair_20cm_auction_decay": repair_20cm_decay,
                     "decision": "保留并执行" if survives else "跳过并递补",
                     "reason": (
                         "竞价可成交且未破坏T日买入前提"
@@ -221,6 +253,8 @@ def main() -> None:
                         if weak_repair_spike
                         else "修复环境中非市场核心3板以上且队列前两位高开至少5%，按高位溢价过度处理"
                         if repair_high_gap
+                        else "修复环境中非市场核心20cm或30cm前排高开后竞价回落至少3%，按高预期塌缩处理"
+                        if repair_20cm_decay
                         else "竞价跌破失效边界"
                     ),
                 }
