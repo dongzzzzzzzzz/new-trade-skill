@@ -7,3 +7,4 @@ round	base	challenger	step	judge_votes	status	note
 6	15baa17	515c766	market_mode_boundary	better=2,worse=0,tie=1	keep	two judges preferred separating market mode from candidate role and removing wait as a mode; one judge could not inspect commits and returned tie
 7	f7aaa0c	53fc4aa	mainline	better=3,worse=0,tie=0	keep	all judges preferred evidence-first theme grouping; next refinement preserves same-day new-theme fermentation and records T-day observation boundaries
 8	5364452	809830c	node_roles	better=3,worse=0,tie=0	keep	all judges preferred relational node labels; refine T-day auction boundary, require funding/response evidence for carding, preserve emerging leaders with broad response
+9	ea4a7a2	5955825	candidate_gates	better=2,worse=1,tie=0	needs_refinement	majority saw better auditability, but branch low-trial admission was ambiguous and one judge flagged over-filtering; refine before keep
