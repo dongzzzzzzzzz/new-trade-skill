@@ -91,7 +91,7 @@
     ],
     [
       "2026-04-23",
-      "603178.SH"
+      "603017.SH"
     ],
     [
       "2026-05-06",
@@ -104,8 +104,8 @@
   ],
   "return_fetch_metadata": {
     "requested_pairs": 11,
-    "cached_pairs": 9,
-    "fetched_pairs": 2,
+    "cached_pairs": 10,
+    "fetched_pairs": 1,
     "failed_pairs": 0,
     "source_version": "eltdx==3.1.1",
     "candidate_hosts": [
@@ -151,11 +151,13 @@
       "219.146.254.27:7709",
       "27.151.2.37:7709",
       "42.177.92.37:7709",
-      "58.34.106.207:7709"
+      "58.34.106.207:7709",
+      "60.12.136.250:7709",
+      "8.160.37.6:7709"
     ],
-    "full_series_pairs": 51
+    "full_series_pairs": 52
   },
-  "summary_rows_current": 51,
-  "process_rows_current": 7634,
-  "full_series_pairs_current": 51
+  "summary_rows_current": 52,
+  "process_rows_current": 7877,
+  "full_series_pairs_current": 52
 }
