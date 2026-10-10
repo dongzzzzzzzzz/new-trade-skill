@@ -1,0 +1,15 @@
+signal_date,candidate,code,executed,execution_status,t1_date,t2_date,t1_open_buy_price,t2_auction_sell_price,return_pct,status
+2026-02-02,,NAN,False,not_executed,2026-02-03,2026-02-04,,,,not_executed
+2026-02-03,,002830.SZ,True,executed,2026-02-04,2026-02-05,28.19,31.01,10.003547357218867,computed
+2026-02-04,,NAN,False,not_executed,2026-02-05,2026-02-06,,,,not_executed
+2026-02-05,,NAN,False,not_executed,2026-02-06,2026-02-09,,,,not_executed
+2026-02-06,,603616.SH,True,executed,2026-02-09,2026-02-10,8.5,9.0,5.882352941176472,computed
+2026-02-09,,NAN,False,not_executed,2026-02-10,2026-02-11,,,,not_executed
+2026-02-10,掌阅科技,603533.SH,True,selected_pending_t2_auction,2026-02-11,2026-02-12,31.09,34.2,10.003216468317788,computed
+2026-02-11,,NAN,False,not_executed,2026-02-12,2026-02-13,,,,not_executed
+2026-02-12,,NAN,False,not_executed,2026-02-13,2026-02-24,,,,not_executed
+2026-02-13,,NAN,False,not_executed,2026-02-24,2026-02-25,,,,not_executed
+2026-02-24,,001896.SZ,True,executed,2026-02-25,2026-02-26,10.5,11.04,5.142857142857138,computed
+2026-02-25,豫能控股,001896.SZ,True,selected_pending_t2_auction,2026-02-26,2026-02-27,11.04,12.76,15.579710144927539,computed
+2026-02-26,金正大,002470.SZ,True,selected_pending_t2_auction,2026-02-27,2026-03-02,2.96,3.35,13.17567567567568,computed
+2026-02-27,豫能控股,001896.SZ,True,selected_pending_t2_auction,2026-03-02,2026-03-03,13.35,13.89,4.044943820224733,computed

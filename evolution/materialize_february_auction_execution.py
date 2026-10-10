@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+import argparse
 from pathlib import Path
 
 import pandas as pd
@@ -22,7 +23,12 @@ OUTPUT_CSV = ROOT / "current_skill_decisions_2026-02.csv"
 
 
 def main() -> None:
-    records = [json.loads(line) for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip()]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, default=INPUT)
+    parser.add_argument("--output", type=Path, default=OUTPUT_JSONL)
+    parser.add_argument("--decisions", type=Path, default=OUTPUT_CSV)
+    args = parser.parse_args()
+    records = [json.loads(line) for line in args.input.read_text(encoding="utf-8").splitlines() if line.strip()]
     auction = pd.read_parquet(
         AUCTION,
         columns=[
@@ -114,7 +120,7 @@ def main() -> None:
             item["replay_status"] = "auction_rejected_or_missing"
             item["invalidated_reason"] = "原始队列内没有通过T+1竞价执行门的候选"
 
-    with OUTPUT_JSONL.open("w", encoding="utf-8") as handle:
+    with args.output.open("w", encoding="utf-8") as handle:
         for item in records:
             handle.write(json.dumps(item, ensure_ascii=False, separators=(",", ":")) + "\n")
 
@@ -129,7 +135,7 @@ def main() -> None:
                 "execution_status": item.get("execution_status", ""),
             }
         )
-    with OUTPUT_CSV.open("w", newline="", encoding="utf-8") as handle:
+    with args.decisions.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
