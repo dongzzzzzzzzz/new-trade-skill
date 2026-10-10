@@ -1,0 +1,2 @@
+signal_date,initial_candidate,initial_role,initial_t1_open,initial_t2_auction,initial_return_pct,alternative_candidate,alternative_role,alternative_t1_open,alternative_t2_auction,alternative_return_pct,diagnosed_stage,diagnostic_only
+2026-02-03,603103.SH,high_core_continuation,33.90,28.78,-15.103245,002830.SZ,same_theme_low_front,28.19,31.01,10.003547,environment_to_node_candidate_generation,true
