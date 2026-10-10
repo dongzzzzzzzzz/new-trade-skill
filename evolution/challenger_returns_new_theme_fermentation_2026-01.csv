@@ -1,0 +1,14 @@
+signal_date,candidate,code,executed,execution_status,t1_date,t2_date,t1_open_buy_price,t2_auction_sell_price,return_pct,status
+2026-01-06,胜通能源,001331.SZ,True,executed,2026-01-07,2026-01-08,56.03,60.0,7.085489916116372,computed
+2026-01-07,锋龙股份,002931.SZ,True,executed,2026-01-08,2026-01-09,46.42,51.06,9.995691512279192,computed
+2026-01-08,锋龙股份,002931.SZ,True,executed,2026-01-09,2026-01-12,51.06,56.17,10.007833920877406,computed
+2026-01-09,锋龙股份,002931.SZ,True,executed,2026-01-12,2026-01-13,56.17,61.79,10.005340929321704,computed
+2026-01-12,锋龙股份,002931.SZ,False,selected_but_unverifiable_missing_t1_open_and_t2_auction,2026-01-13,2026-01-14,,,,selected_but_unverifiable_missing_t1_open_and_t2_auction
+2026-01-19,汉缆股份,002498.SZ,True,executed,2026-01-20,2026-01-21,5.28,5.74,8.712121212121215,computed
+2026-01-20,锋龙股份,002931.SZ,True,executed,2026-01-21,2026-01-22,82.25,90.48,10.006079027355618,computed
+2026-01-21,锋龙股份,002931.SZ,True,executed,2026-01-22,2026-01-23,90.48,99.53,10.002210433244919,computed
+2026-01-22,白银有色,601212.SH,False,selected_but_unverifiable_missing_t2_auction,2026-01-23,2026-01-26,,,,selected_but_unverifiable_missing_t2_auction
+2026-01-23,白银有色,601212.SH,True,executed,2026-01-26,2026-01-27,10.97,11.41,4.0109389243391025,computed
+2026-01-27,白银有色,601212.SH,True,executed,2026-01-28,2026-01-29,12.57,15.19,20.84327764518694,computed
+2026-01-28,湖南黄金,002155.SZ,True,executed,2026-01-29,2026-01-30,33.64,37.0,9.98810939357908,computed
+2026-01-29,横店影视,603103.SH,True,executed,2026-01-30,2026-02-02,24.21,28.05,15.861214374225518,computed
