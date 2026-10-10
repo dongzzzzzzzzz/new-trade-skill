@@ -1,0 +1,2 @@
+signal_date,candidate,code,executed,t1_date,t2_date,t1_open_buy_price,t2_auction_sell_price,return_pct,status
+2026-01-06,胜通能源,001331.SZ,True,2026-01-07,2026-01-08,56.03,60.0,7.085489916116372,computed

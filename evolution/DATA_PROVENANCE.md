@@ -6,8 +6,10 @@
 
 - `data/2026_raw/klines_2026.parquet`：日线开、高、低、收、成交量和成交额，覆盖 2026-01-05 至 2026-08-25。
 - `data/2026_raw/special_pools_2026.parquet`：涨停、炸板、跌停池和股票名称，覆盖同一日线区间。
+- `data/trade_setup_strategy/hithink_enriched/special_pools_enriched.csv`：涨停原因、连板文字、封单和涨停时间等描述性事实；不使用其中任何市场角色、路径、候选资格或排序字段。
 - `data/capital_profit_path_replay_v3/auction_process.parquet`：竞价逐笔过程，覆盖 2026-01-06 至 2026-02-02。
 - `data/capital_profit_path_replay_v3/auction_summary.parquet`：竞价开盘价和数据质量字段，覆盖 2026-01-06 至 2026-02-02。
+- `evolution/index_facts_2026-01.json`：通过东方财富 `push2his` 历史 K 线接口抓取的上证指数、深证成指和创业板指日线事实；保存接口 URL、字段和抓取时间。
 
 ## 不得直接作为目标 skill 结论的输入
 
@@ -33,3 +35,5 @@
 ## 封存区
 
 2026-09-01 至 2026-10-09 不参与当前规则选择和调参。当前可先使用 2026-01 至 2026-08 中具备完整事实和竞价数据的样本；若竞价源只覆盖到 2026-02-02，则先把 1 月作为开发/基线窗口，不能把它包装成全年验证。
+
+`evolution/replay_inputs_2026-01.csv` 是由上述事实源合成的 T 日输入。它不包含 `market_role`、`path_id`、`candidate_eligible`、外部主线结论、候选排序或收益字段；这些必须由目标 `SKILL.md` 在回放时生成。
