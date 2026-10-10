@@ -28,24 +28,39 @@ def load_helper():
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", required=True, type=Path)
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--input", type=Path)
+    inputs.add_argument("--queue-input", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
 
     helper = load_helper()
-    inputs = pd.read_csv(args.input, usecols=["date", "pool_type", "thscode"])
-    inputs["date"] = pd.to_datetime(inputs["date"]).dt.normalize()
-    inputs = inputs[inputs["pool_type"].eq("limit_up")]
-    bars = pd.read_parquet(KLINES, columns=["date"])
-    trade_dates = sorted(pd.to_datetime(bars["date"]).dt.normalize().drop_duplicates().tolist())
     requests: set[tuple[str, str]] = set()
-    for signal_date in sorted(inputs["date"].drop_duplicates().tolist()):
-        pos = bisect_right(trade_dates, signal_date)
-        if pos >= len(trade_dates):
-            continue
-        auction_date = trade_dates[pos].date().isoformat()
-        rows = inputs[inputs["date"].eq(signal_date)]
-        requests.update((auction_date, str(code)) for code in rows["thscode"])
+    if args.queue_input:
+        queue_records = [
+            json.loads(line)
+            for line in args.queue_input.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        for record in queue_records:
+            requests.update((record["auction_date"], str(code)) for code in record["original_queue"])
+        input_path = args.queue_input
+        scope = "frozen original_queue rows; T+1 auction only"
+    else:
+        monthly_inputs = pd.read_csv(args.input, usecols=["date", "pool_type", "thscode"])
+        monthly_inputs["date"] = pd.to_datetime(monthly_inputs["date"]).dt.normalize()
+        monthly_inputs = monthly_inputs[monthly_inputs["pool_type"].eq("limit_up")]
+        bars = pd.read_parquet(KLINES, columns=["date"])
+        trade_dates = sorted(pd.to_datetime(bars["date"]).dt.normalize().drop_duplicates().tolist())
+        for signal_date in sorted(monthly_inputs["date"].drop_duplicates().tolist()):
+            pos = bisect_right(trade_dates, signal_date)
+            if pos >= len(trade_dates):
+                continue
+            auction_date = trade_dates[pos].date().isoformat()
+            rows = monthly_inputs[monthly_inputs["date"].eq(signal_date)]
+            requests.update((auction_date, str(code)) for code in rows["thscode"])
+        input_path = args.input
+        scope = "limit_up rows; T+1 auction only"
 
     config = {
         "auction_workers": 2,
@@ -56,8 +71,8 @@ def main() -> None:
         sorted(requests), args.output_dir, config, refresh=False
     )
     manifest = {
-        "input": str(args.input.resolve()),
-        "scope": "limit_up rows; T+1 auction only",
+        "input": str(input_path.resolve()),
+        "scope": scope,
         "request_pairs": len(requests),
         "summary_rows": len(summary),
         "process_rows": len(process),

@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_limit_open_execution_2026-01.csv",
+  "signal_dates": 19,
+  "computed_trades": 4,
+  "not_executed": 15,
+  "simple_return_sum_pct": -0.03259416220056188,
+  "average_trade_return_pct": -0.00814854055014047,
+  "win_rate": 0.5,
+  "compounded_return_pct": -3.7175928259250313,
+  "max_sequential_equity_drawdown_pct": -10.021945866861737
+}

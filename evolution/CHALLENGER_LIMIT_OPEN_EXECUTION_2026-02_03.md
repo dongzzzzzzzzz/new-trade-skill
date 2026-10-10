@@ -20,6 +20,8 @@ or their order.
 
 | Window | Parent | Challenger | Effect |
 |---|---:|---:|---|
+| January simple return | `+70.640454%` | `-0.032594%` | Old baseline counted repeated limit-locked opens as fills; only four trades remain executable |
+| January win rate | `81.818182%` | `50%` | Exposes candidate coverage and fallback-quality failures hidden by false fills |
 | February simple return | `+63.832304%` | `+45.900969%` | Removes a false `+10.003216%` fill; executable fallback loses `-7.928118%` |
 | February win rate | `100%` | `85.714286%` | Exposes a real upstream candidate-generation failure on 2026-02-10 |
 | March simple return | `+71.585112%` | `+82.533949%` | Frozen-queue fallbacks improve 2026-03-05 and 2026-03-12 |
@@ -28,6 +30,9 @@ or their order.
 
 Changed executions:
 
+- January: ten signal dates change; nine become no-trade because every previously
+  eligible candidate is limit-locked, while `2026-01-21` falls through to
+  `601616.SH` and loses `-14.864865%`.
 - `2026-02-10`: `603533.SH` is locked at limit-up; skip `001330.SZ`, also locked,
   then execute `300182.SZ`.
 - `2026-03-05`: skip limit-locked `000533.SZ`, execute `002498.SZ`.
@@ -38,8 +43,9 @@ unreachable fill is not eligible for Darwin profitability comparison. This is a
 correctness gate, and the newly visible 2026-02-10 loss becomes the next upstream
 diagnosis target.
 
-## Remaining validation
+## Consequence
 
-January records contain the same false-fill risk but were built with an older,
-manual auction materialization. January must be rematerialized from a queue-only
-auction cache before its prior return metrics can be compared with this rule.
+The old January and February headline returns are invalid as executable strategy
+evidence. The next Darwin rounds must improve buyable candidate coverage and the
+quality of frozen-queue fallbacks; removing the reachability gate to restore the
+old numbers is prohibited.

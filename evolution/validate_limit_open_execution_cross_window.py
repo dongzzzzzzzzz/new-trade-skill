@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the limit-open execution gate across February and March."""
+"""Validate the limit-open execution gate across January through March."""
 
 from __future__ import annotations
 
@@ -24,12 +24,12 @@ def changed_executions(parent: dict[str, dict], challenger: dict[str, dict]) -> 
         assert parent[signal_date]["original_queue"] == challenger[signal_date]["original_queue"]
     return {
         signal_date: (
-            parent[signal_date].get("executed_candidate", ""),
-            challenger[signal_date].get("executed_candidate", ""),
+            parent[signal_date].get("executed_candidate") or "",
+            challenger[signal_date].get("executed_candidate") or "",
         )
         for signal_date in parent
-        if parent[signal_date].get("executed_candidate")
-        != challenger[signal_date].get("executed_candidate")
+        if (parent[signal_date].get("executed_candidate") or "")
+        != (challenger[signal_date].get("executed_candidate") or "")
     }
 
 
@@ -46,32 +46,54 @@ def validate_returns(name: str) -> int:
 
 
 def main() -> None:
+    jan_parent = load_jsonl("replay_challenger_isolated_high_core_2026-01.jsonl")
+    jan_challenger = load_jsonl("replay_challenger_limit_open_execution_2026-01.jsonl")
     feb_parent = load_jsonl("replay_challenger_isolated_high_core_auction_2026-02.jsonl")
     feb_challenger = load_jsonl("replay_challenger_limit_open_execution_2026-02.jsonl")
     mar_parent = load_jsonl("replay_challenger_dual_divergence_high_low_auction_2026-03.jsonl")
     mar_challenger = load_jsonl("replay_challenger_limit_open_execution_2026-03.jsonl")
 
+    jan_changes = changed_executions(jan_parent, jan_challenger)
     feb_changes = changed_executions(feb_parent, feb_challenger)
     mar_changes = changed_executions(mar_parent, mar_challenger)
+    assert jan_changes == {
+        "2026-01-06": ("001331.SZ", ""),
+        "2026-01-07": ("002931.SZ", ""),
+        "2026-01-08": ("002931.SZ", ""),
+        "2026-01-09": ("002931.SZ", ""),
+        "2026-01-12": ("002931.SZ", ""),
+        "2026-01-19": ("002498.SZ", ""),
+        "2026-01-20": ("002931.SZ", ""),
+        "2026-01-21": ("002931.SZ", "601616.SH"),
+        "2026-01-22": ("601212.SH", ""),
+        "2026-01-28": ("601212.SH", ""),
+    }
     assert feb_changes == {"2026-02-10": ("603533.SH", "300182.SZ")}
     assert mar_changes == {
         "2026-03-05": ("000533.SZ", "002498.SZ"),
         "2026-03-12": ("000537.SZ", "600726.SH"),
     }
 
-    for challenger, changes in ((feb_challenger, feb_changes), (mar_challenger, mar_changes)):
+    for challenger, changes in (
+        (jan_challenger, jan_changes),
+        (feb_challenger, feb_changes),
+        (mar_challenger, mar_changes),
+    ):
         assert all(not any(row["leakage_check"].values()) for row in challenger.values())
         for signal_date, (old_code, new_code) in changes.items():
             auction = {row["candidate"]: row for row in challenger[signal_date]["auction_records"]}
             assert auction[old_code]["limit_open_untradeable"] is True
             assert auction[old_code]["decision"] == "跳过并递补"
-            assert auction[new_code]["limit_open_untradeable"] is False
-            assert auction[new_code]["decision"] == "保留并执行"
+            if new_code:
+                assert auction[new_code]["limit_open_untradeable"] is False
+                assert auction[new_code]["decision"] == "保留并执行"
 
     result = {
+        "2026-01": jan_changes,
         "2026-02": feb_changes,
         "2026-03": mar_changes,
         "computed_returns": {
+            "2026-01": validate_returns("challenger_returns_limit_open_execution_2026-01.csv"),
             "2026-02": validate_returns("challenger_returns_limit_open_execution_2026-02.csv"),
             "2026-03": validate_returns("challenger_returns_limit_open_execution_2026-03.csv"),
         },
