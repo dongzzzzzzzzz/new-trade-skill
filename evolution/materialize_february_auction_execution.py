@@ -43,6 +43,25 @@ def matches_exchange_price(left: float, right: float) -> bool:
     return abs(left - right) <= 0.011
 
 
+def weak_repair_last_minute_spike(
+    environment_state: str,
+    sentiment_state: str,
+    role: str,
+    previous_close: float,
+    auction_price_0924: float,
+    open_price: float,
+) -> bool:
+    final_jump = (open_price / auction_price_0924 - 1.0) * 100.0
+    open_gap = (open_price / previous_close - 1.0) * 100.0
+    return (
+        environment_state == "修复"
+        and sentiment_state == "修复"
+        and role != "市场核心"
+        and final_jump >= 5.0
+        and open_gap >= 8.0
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, default=INPUT)
@@ -116,9 +135,18 @@ def main() -> None:
                 and item.get("environment_state") in {"分歧", "退潮", "分歧转退潮"}
                 and role != "市场核心"
             )
+            weak_repair_spike = weak_repair_last_minute_spike(
+                str(item.get("environment_state", "")),
+                str(item.get("sentiment_state", "")),
+                role,
+                close_price,
+                float(raw["auction_price_0924"]),
+                open_price,
+            )
             survives = (
                 not limit_open_untradeable
                 and not high_volatility_auction_decay
+                and not weak_repair_spike
                 and gap >= -2.0
                 and float(raw["open_volume_hands"]) > 0
                 and drift > -8.0
@@ -126,6 +154,8 @@ def main() -> None:
             if limit_open_untradeable:
                 status = "不可交易"
             elif high_volatility_auction_decay:
+                status = "不及预期"
+            elif weak_repair_spike:
                 status = "不及预期"
             elif gap >= 5.0:
                 status = "超预期"
@@ -146,6 +176,7 @@ def main() -> None:
                     "limit_up_price": limit_up_price,
                     "limit_open_untradeable": limit_open_untradeable,
                     "high_volatility_auction_decay": high_volatility_auction_decay,
+                    "weak_repair_last_minute_spike": weak_repair_spike,
                     "decision": "保留并执行" if survives else "跳过并递补",
                     "reason": (
                         "竞价可成交且未破坏T日买入前提"
@@ -154,6 +185,8 @@ def main() -> None:
                         if limit_open_untradeable
                         else "20cm或30cm非市场核心从9:20涨停预期明显回落，双分歧或退潮中高开不等于超预期"
                         if high_volatility_auction_decay
+                        else "弱修复中的非市场核心在9:24后末分钟急拉且高开，按竞价虚强处理"
+                        if weak_repair_spike
                         else "竞价跌破失效边界"
                     ),
                 }

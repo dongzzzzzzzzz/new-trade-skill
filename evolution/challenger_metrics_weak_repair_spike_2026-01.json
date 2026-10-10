@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_weak_repair_spike_2026-01.csv",
+  "signal_dates": 19,
+  "computed_trades": 3,
+  "not_executed": 16,
+  "simple_return_sum_pct": 14.832270702664308,
+  "average_trade_return_pct": 4.944090234221436,
+  "win_rate": 0.6666666666666666,
+  "compounded_return_pct": 13.093621125103926,
+  "max_sequential_equity_drawdown_pct": -10.021945866861737
+}

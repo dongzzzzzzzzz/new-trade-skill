@@ -11,7 +11,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from materialize_february_auction_execution import matches_exchange_price, theoretical_limit_up
+from materialize_february_auction_execution import (
+    matches_exchange_price,
+    theoretical_limit_up,
+    weak_repair_last_minute_spike,
+)
 
 
 def was_eligible(record: dict, previously_executed: str) -> bool:
@@ -97,6 +101,27 @@ def main() -> None:
             record["limit_open_untradeable"] = limit_open_untradeable
 
             eligible = was_eligible(record, previously_executed)
+            role = next(
+                (
+                    str(audit.get("role", ""))
+                    for audit in item.get("candidate_audit", [])
+                    if audit.get("candidate") == code
+                ),
+                "",
+            )
+            weak_repair_spike = bool(
+                fact
+                and complete_prices
+                and weak_repair_last_minute_spike(
+                    str(item.get("environment_state", "")),
+                    str(item.get("sentiment_state", "")),
+                    role,
+                    fact[1],
+                    float(record["auction_price_0924"]),
+                    float(record["t1_open"]),
+                )
+            )
+            record["weak_repair_last_minute_spike"] = weak_repair_spike
             if not fresh or fresh.get("auction_data_mode") != "full_series":
                 record["auction_status"] = "不可判断"
                 record["decision"] = "跳过并等待"
@@ -105,6 +130,10 @@ def main() -> None:
                 record["auction_status"] = "不可交易"
                 record["decision"] = "跳过并递补"
                 record["reason"] = "9:20、9:24和T+1开盘均锁在涨停价，无法证明开盘可成交"
+            elif weak_repair_spike:
+                record["auction_status"] = "不及预期"
+                record["decision"] = "跳过并递补"
+                record["reason"] = "弱修复中的非市场核心在9:24后末分钟急拉且高开，按竞价虚强处理"
             elif eligible and not selected_code:
                 selected_code = code
                 selected_open = float(record["t1_open"])
