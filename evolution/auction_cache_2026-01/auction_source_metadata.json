@@ -1,7 +1,7 @@
 {
-  "requested_pairs": 4,
-  "cached_pairs": 4,
-  "fetched_pairs": 0,
+  "requested_pairs": 3,
+  "cached_pairs": 2,
+  "fetched_pairs": 1,
   "failed_pairs": 1,
   "source_version": "eltdx==3.1.1",
   "candidate_hosts": [
@@ -44,8 +44,10 @@
   "connected_hosts": [
     "123.125.108.103:7709",
     "182.118.8.4:7709",
+    "183.131.224.27:7709",
+    "202.108.254.67:7709",
     "218.75.126.9:7709",
     "221.0.195.48:7709"
   ],
-  "full_series_pairs": 43
+  "full_series_pairs": 44
 }

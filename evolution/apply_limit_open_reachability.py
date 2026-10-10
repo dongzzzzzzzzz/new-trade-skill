@@ -100,6 +100,18 @@ def main() -> None:
             record["limit_up_price"] = limit_up_price
             record["limit_open_untradeable"] = limit_open_untradeable
 
+            open_gap_pct = None
+            auction_drift_pct = None
+            if fact and complete_prices:
+                open_gap_pct = (float(record["t1_open"]) / fact[1] - 1.0) * 100.0
+                auction_drift_pct = (
+                    float(record["auction_price_0924"]) / float(record["auction_price_0920"]) - 1.0
+                ) * 100.0
+            record["open_gap_pct"] = open_gap_pct
+            record["auction_drift_pct"] = auction_drift_pct
+            open_gap_failure = open_gap_pct is not None and open_gap_pct < -2.0
+            record["open_gap_failure"] = open_gap_failure
+
             eligible = was_eligible(record, previously_executed)
             role = next(
                 (
@@ -134,6 +146,10 @@ def main() -> None:
                 record["auction_status"] = "不及预期"
                 record["decision"] = "跳过并递补"
                 record["reason"] = "弱修复中的非市场核心在9:24后末分钟急拉且高开，按竞价虚强处理"
+            elif open_gap_failure:
+                record["auction_status"] = "不及预期"
+                record["decision"] = "跳过并递补"
+                record["reason"] = "T+1开盘跌破前收-2%的基础失效边界"
             elif eligible and not selected_code:
                 selected_code = code
                 selected_open = float(record["t1_open"])

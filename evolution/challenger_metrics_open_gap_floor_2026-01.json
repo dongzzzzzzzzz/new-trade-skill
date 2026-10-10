@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_open_gap_floor_2026-01.csv",
+  "signal_dates": 19,
+  "computed_trades": 3,
+  "not_executed": 16,
+  "simple_return_sum_pct": 24.552329777073226,
+  "average_trade_return_pct": 8.184109925691075,
+  "win_rate": 0.6666666666666666,
+  "compounded_return_pct": 25.310785508857524,
+  "max_sequential_equity_drawdown_pct": -0.30188679245282124
+}

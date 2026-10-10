@@ -55,12 +55,8 @@
   },
   "worker_cap": 2,
   "return_prices_not_fetched": false,
-  "return_request_pairs_added": 4,
+  "return_request_pairs_added": 3,
   "return_requests": [
-    [
-      "2026-01-23",
-      "601616.SH"
-    ],
     [
       "2026-01-27",
       "601212.SH"
@@ -71,13 +67,13 @@
     ],
     [
       "2026-02-02",
-      "601212.SH"
+      "600916.SH"
     ]
   ],
   "return_fetch_metadata": {
-    "requested_pairs": 4,
-    "cached_pairs": 4,
-    "fetched_pairs": 0,
+    "requested_pairs": 3,
+    "cached_pairs": 2,
+    "fetched_pairs": 1,
     "failed_pairs": 1,
     "source_version": "eltdx==3.1.1",
     "candidate_hosts": [
@@ -120,12 +116,14 @@
     "connected_hosts": [
       "123.125.108.103:7709",
       "182.118.8.4:7709",
+      "183.131.224.27:7709",
+      "202.108.254.67:7709",
       "218.75.126.9:7709",
       "221.0.195.48:7709"
     ],
-    "full_series_pairs": 43
+    "full_series_pairs": 44
   },
-  "summary_rows_current": 44,
-  "process_rows_current": 6840,
-  "full_series_pairs_current": 43
+  "summary_rows_current": 45,
+  "process_rows_current": 7099,
+  "full_series_pairs_current": 44
 }
