@@ -1,0 +1,11 @@
+{
+  "source": "evolution/current_skill_returns_2026-01_to_06.csv",
+  "signal_dates": 115,
+  "computed_trades": 43,
+  "not_executed": 72,
+  "simple_return_sum_pct": 224.27550136455363,
+  "average_trade_return_pct": 5.215709334059387,
+  "win_rate": 0.7906976744186046,
+  "compounded_return_pct": 725.717871474427,
+  "max_sequential_equity_drawdown_pct": -7.037747920665405
+}
