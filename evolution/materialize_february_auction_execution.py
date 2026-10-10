@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import json
 import argparse
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 import pandas as pd
@@ -22,6 +23,26 @@ OUTPUT_JSONL = ROOT / "replay_current_skill_auction_2026-02.jsonl"
 OUTPUT_CSV = ROOT / "current_skill_decisions_2026-02.csv"
 
 
+def daily_limit_ratio(code: str, stock_name: str) -> Decimal:
+    normalized_name = stock_name.upper().replace("*", "")
+    if "ST" in normalized_name:
+        return Decimal("0.05")
+    if code.endswith(".BJ"):
+        return Decimal("0.30")
+    if code.split(".", 1)[0].startswith(("300", "301", "688", "689")):
+        return Decimal("0.20")
+    return Decimal("0.10")
+
+
+def theoretical_limit_up(previous_close: float, code: str, stock_name: str) -> float:
+    price = Decimal(str(previous_close)) * (Decimal("1") + daily_limit_ratio(code, stock_name))
+    return float(price.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+
+def matches_exchange_price(left: float, right: float) -> bool:
+    return abs(left - right) <= 0.011
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, default=INPUT)
@@ -31,7 +52,7 @@ def main() -> None:
     parser.add_argument("--auction-summary", type=Path, default=AUCTION)
     args = parser.parse_args()
     records = [json.loads(line) for line in args.input.read_text(encoding="utf-8").splitlines() if line.strip()]
-    facts = pd.read_csv(args.facts, usecols=["date", "thscode", "close"])
+    facts = pd.read_csv(args.facts, usecols=["date", "thscode", "stock_name", "close"])
     auction = pd.read_parquet(
         args.auction_summary,
         columns=[
@@ -78,10 +99,23 @@ def main() -> None:
             # by the frozen replay input through a direct lookup below.
             close_rows = facts[(facts["date"] == item["signal_date"]) & facts["thscode"].eq(code)]
             close_price = float(close_rows.iloc[0]["close"])
+            stock_name = str(close_rows.iloc[0]["stock_name"])
             gap = (open_price / close_price - 1.0) * 100.0
             drift = (float(raw["auction_price_0924"]) / float(raw["auction_price_0920"]) - 1.0) * 100.0
-            survives = gap >= -2.0 and float(raw["open_volume_hands"]) > 0 and drift > -8.0
-            if gap >= 5.0:
+            limit_up_price = theoretical_limit_up(close_price, code, stock_name)
+            limit_open_untradeable = all(
+                matches_exchange_price(float(price), limit_up_price)
+                for price in (raw["auction_price_0920"], raw["auction_price_0924"], open_price)
+            )
+            survives = (
+                not limit_open_untradeable
+                and gap >= -2.0
+                and float(raw["open_volume_hands"]) > 0
+                and drift > -8.0
+            )
+            if limit_open_untradeable:
+                status = "不可交易"
+            elif gap >= 5.0:
                 status = "超预期"
             elif survives:
                 status = "符合预期"
@@ -97,8 +131,16 @@ def main() -> None:
                     "open_volume_hands": float(raw["open_volume_hands"]),
                     "open_gap_pct": gap,
                     "auction_drift_pct": drift,
+                    "limit_up_price": limit_up_price,
+                    "limit_open_untradeable": limit_open_untradeable,
                     "decision": "保留并执行" if survives else "跳过并递补",
-                    "reason": "竞价可成交且未破坏T日买入前提" if survives else "竞价跌破失效边界",
+                    "reason": (
+                        "竞价可成交且未破坏T日买入前提"
+                        if survives
+                        else "T+1开盘价达到涨停价，无法证明开盘可成交，按原始队列顺延"
+                        if limit_open_untradeable
+                        else "竞价跌破失效边界"
+                    ),
                 }
             )
             if survives:
