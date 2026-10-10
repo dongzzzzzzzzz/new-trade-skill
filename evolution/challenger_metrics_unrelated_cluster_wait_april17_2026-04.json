@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_unrelated_cluster_wait_april17_2026-04.csv",
+  "signal_dates": 21,
+  "computed_trades": 9,
+  "not_executed": 12,
+  "simple_return_sum_pct": 27.642007264292822,
+  "average_trade_return_pct": 3.07133414047698,
+  "win_rate": 0.6666666666666666,
+  "compounded_return_pct": 28.805698757336362,
+  "max_sequential_equity_drawdown_pct": -7.037747920665405
+}
