@@ -24,6 +24,7 @@ auction_date
 auction_records
 executed_candidate
 executed
+execution_status
 t1_open_buy_price
 t2_auction_sell_price
 return_pct
@@ -38,6 +39,7 @@ leakage_check
 - `environment_*`、`sentiment_*`、`market_mode`、`theme_classification`、`node_role_records`、`candidate_audit` 和 `original_queue` 只能使用 T 日收盘前事实。
 - `auction_records` 只能记录 T+1 09:25 前的封单、撤单、开盘预期、开盘位置和板块跟随。
 - `t1_open_buy_price` 只能是 T+1 开盘成交价；不可成交时留空并写明原因。
+- `execution_status` 用于区分 `executed`、`not_executed`、`selected_but_unverifiable_missing_t1_open` 等执行证据状态；数据缺失不得被当作交易收益。
 - `t2_auction_sell_price` 只能是 T+2 竞价卖出价；不能用 T+1 收盘价、盘中高点或 T+2 之后价格替代。
 - `return_pct` 只在实际执行且两个价格齐全时计算：`(t2_auction_sell_price / t1_open_buy_price - 1) * 100`。
 

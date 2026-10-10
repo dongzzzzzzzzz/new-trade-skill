@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from bisect import bisect_right
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -66,11 +67,13 @@ def main() -> None:
         code = normalize_code(record["code"])
         t1_date, t2_date = next_two_dates(signal_date, trading_dates)
         executed = str(record["executed"]).strip().lower() in {"1", "true", "yes", "y"}
+        execution_status = str(record.get("execution_status", "executed" if executed else "not_executed"))
         result = {
             "signal_date": signal_date.date().isoformat(),
             "candidate": record.get("candidate", ""),
             "code": code,
             "executed": executed,
+            "execution_status": execution_status,
             "t1_date": t1_date.date().isoformat() if t1_date is not None else "",
             "t2_date": t2_date.date().isoformat() if t2_date is not None else "",
             "t1_open_buy_price": "",
@@ -79,6 +82,11 @@ def main() -> None:
             "status": "missing_trading_dates" if t2_date is None else "pending",
         }
         if t1_date is None or t2_date is None:
+            rows.append(result)
+            continue
+
+        if not executed:
+            result["status"] = execution_status
             rows.append(result)
             continue
 
@@ -91,11 +99,10 @@ def main() -> None:
 
         buy_price = float(t1_rows.iloc[0]["open"])
         sell_price = float(t2_rows.iloc[0]["open_price_0925"])
-        if not executed:
-            result["status"] = "not_executed"
+        if not math.isfinite(buy_price) or not math.isfinite(sell_price):
+            result["status"] = "missing_raw_price"
             rows.append(result)
             continue
-
         result["t1_open_buy_price"] = buy_price
         result["t2_auction_sell_price"] = sell_price
         result["return_pct"] = (sell_price / buy_price - 1.0) * 100.0
