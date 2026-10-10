@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_first_day_single_tier_2026-06.csv",
+  "signal_dates": 21,
+  "computed_trades": 8,
+  "not_executed": 13,
+  "simple_return_sum_pct": 23.310379545909676,
+  "average_trade_return_pct": 2.9137974432387095,
+  "win_rate": 0.75,
+  "compounded_return_pct": 24.534804090942085,
+  "max_sequential_equity_drawdown_pct": -2.1741671537112706
+}
