@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_high_volatility_auction_decay_2026-02.csv",
+  "signal_dates": 14,
+  "computed_trades": 6,
+  "not_executed": 8,
+  "simple_return_sum_pct": 53.829087082080434,
+  "average_trade_return_pct": 8.971514513680072,
+  "win_rate": 1.0,
+  "compounded_return_pct": 66.67318149973593,
+  "max_sequential_equity_drawdown_pct": 0.0
+}

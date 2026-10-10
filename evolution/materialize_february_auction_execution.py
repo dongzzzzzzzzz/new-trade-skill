@@ -107,14 +107,26 @@ def main() -> None:
                 matches_exchange_price(float(price), limit_up_price)
                 for price in (raw["auction_price_0920"], raw["auction_price_0924"], open_price)
             )
+            role = str(tday_row.get("role", ""))
+            high_volatility_auction_decay = (
+                daily_limit_ratio(code, stock_name) >= Decimal("0.20")
+                and matches_exchange_price(float(raw["auction_price_0920"]), limit_up_price)
+                and drift <= -5.0
+                and gap >= 10.0
+                and item.get("environment_state") in {"分歧", "退潮", "分歧转退潮"}
+                and role != "市场核心"
+            )
             survives = (
                 not limit_open_untradeable
+                and not high_volatility_auction_decay
                 and gap >= -2.0
                 and float(raw["open_volume_hands"]) > 0
                 and drift > -8.0
             )
             if limit_open_untradeable:
                 status = "不可交易"
+            elif high_volatility_auction_decay:
+                status = "不及预期"
             elif gap >= 5.0:
                 status = "超预期"
             elif survives:
@@ -133,12 +145,15 @@ def main() -> None:
                     "auction_drift_pct": drift,
                     "limit_up_price": limit_up_price,
                     "limit_open_untradeable": limit_open_untradeable,
+                    "high_volatility_auction_decay": high_volatility_auction_decay,
                     "decision": "保留并执行" if survives else "跳过并递补",
                     "reason": (
                         "竞价可成交且未破坏T日买入前提"
                         if survives
                         else "T+1开盘价达到涨停价，无法证明开盘可成交，按原始队列顺延"
                         if limit_open_untradeable
+                        else "20cm或30cm非市场核心从9:20涨停预期明显回落，双分歧或退潮中高开不等于超预期"
+                        if high_volatility_auction_decay
                         else "竞价跌破失效边界"
                     ),
                 }
