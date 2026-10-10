@@ -1,0 +1,15 @@
+signal_date,auction_date,environment_state,sentiment_state,market_mode,theme,original_queue,queue_size,data_cutoff,replay_status
+2026-02-02,2026-02-03,退潮,退潮,等待,,,0,2026-02-02 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-03,2026-02-04,修复,修复但高位延续待降级,主线低位接棒优先,,002830.SZ|603103.SH,2,2026-02-03 15:00 Asia/Shanghai,tday_queue_frozen_with_repair_challenger_slice
+2026-02-04,2026-02-05,分歧,强化但指数分化,收缩中的连板接力,AI传媒/文化内容,002830.SZ,1,2026-02-04 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-05,2026-02-06,退潮,退潮,等待,,,0,2026-02-05 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-06,2026-02-09,修复,修复但主线接棒未确认,高位核心保留观察,,603616.SH,1,2026-02-06 15:00 Asia/Shanghai,tday_queue_frozen_with_repair_challenger_slice
+2026-02-09,2026-02-10,修复,修复且同题材接棒优先,液冷收购/人形机器人低位接棒,,003018.SZ|300912.SZ,2,2026-02-09 15:00 Asia/Shanghai,tday_queue_frozen_with_repair_challenger_slice
+2026-02-10,2026-02-11,分歧,分歧,低位轮动,AI短剧/文化传媒,603533.SH|001330.SZ|300182.SZ,3,2026-02-10 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-11,2026-02-12,退潮,退潮,等待,,,0,2026-02-11 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-12,2026-02-13,退潮,冰点,等待,,,0,2026-02-12 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-13,2026-02-24,退潮,冰点,等待,,,0,2026-02-13 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-24,2026-02-25,修复,修复偏强,算力/火电主线延续,,001896.SZ,1,2026-02-24 15:00 Asia/Shanghai,tday_queue_frozen_with_repair_challenger_slice
+2026-02-25,2026-02-26,进攻,强化,连板接力,算力/火电绿电,001896.SZ|002498.SZ,2,2026-02-25 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-26,2026-02-27,分歧,分歧,低位接棒,磷化工/化肥,002470.SZ|600078.SH,2,2026-02-26 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
+2026-02-27,2026-03-02,修复偏强,强化但高位需验货,连板接力/主线延续,算力火电绿电与资源轮动,001896.SZ|002470.SZ|002378.SZ,3,2026-02-27 15:00 Asia/Shanghai,tday_queue_frozen_pending_auction
