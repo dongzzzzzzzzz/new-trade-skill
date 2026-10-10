@@ -117,6 +117,10 @@ def main() -> None:
     facts = facts.merge(market, on="date", how="left", suffixes=("", "_market"))
 
     index_payload = json.loads(args.index_facts.read_text(encoding="utf-8"))
+    index_source = index_payload.get("source", "unspecified index source")
+    index_amount_semantics = index_payload.get(
+        "index_amount_semantics", "index amount semantics unspecified"
+    )
     index_rows = []
     for index_name, record in index_payload["indices"].items():
         for line in record["payload"]["data"]["klines"]:
@@ -157,7 +161,7 @@ def main() -> None:
     facts["fact_source"] = (
         "2026_raw/klines_2026.parquet + 2026_raw/special_pools_2026.parquet + "
         "trade_setup_strategy/hithink_enriched/special_pools_enriched.csv + "
-        "eastmoney_push2his index kline endpoint"
+        f"{index_source} index kline endpoint; {index_amount_semantics}"
     )
     facts["strategy_fields_excluded"] = True
     facts = facts.sort_values(["date", "pool_type", "thscode"])
