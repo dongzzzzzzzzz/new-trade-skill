@@ -1,0 +1,11 @@
+{
+  "source": "evolution/challenger_returns_dual_divergence_high_low_2026-03.csv",
+  "signal_dates": 22,
+  "computed_trades": 12,
+  "not_executed": 10,
+  "simple_return_sum_pct": 71.58511203526685,
+  "average_trade_return_pct": 5.965426002938904,
+  "win_rate": 0.8333333333333334,
+  "compounded_return_pct": 94.04667702542262,
+  "max_sequential_equity_drawdown_pct": -11.33720930232559
+}
