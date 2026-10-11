@@ -90,14 +90,17 @@ def main() -> None:
             rows.append(result)
             continue
 
-        t1_rows = klines[(klines["date"] == t1_date) & (klines["code_key"] == code)]
+        # Both legs use the executable 09:25 auction price. The daily-bar
+        # ``open`` may be adjusted, while this replay needs the actual price
+        # available at the T+1 open and the T+2 auction exit.
+        t1_rows = auction[(auction["trade_date"] == t1_date) & (auction["code_key"] == code)]
         t2_rows = auction[(auction["trade_date"] == t2_date) & (auction["code_key"] == code)]
         if t1_rows.empty or t2_rows.empty:
             result["status"] = "missing_raw_price"
             rows.append(result)
             continue
 
-        buy_price = float(t1_rows.iloc[0]["open"])
+        buy_price = float(t1_rows.iloc[0]["open_price_0925"])
         sell_price = float(t2_rows.iloc[0]["open_price_0925"])
         if not math.isfinite(buy_price) or not math.isfinite(sell_price):
             result["status"] = "missing_raw_price"

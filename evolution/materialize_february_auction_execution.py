@@ -43,6 +43,10 @@ def matches_exchange_price(left: float, right: float) -> bool:
     return abs(left - right) <= 0.011
 
 
+def is_mainboard_tradeable(code: str) -> bool:
+    return code.split(".", 1)[0].startswith(("000", "001", "002", "003", "600", "601", "603", "605"))
+
+
 def weak_repair_last_minute_spike(
     environment_state: str,
     sentiment_state: str,
@@ -79,26 +83,6 @@ def repair_high_gap_overextension(
     )
 
 
-def repair_20cm_auction_decay(
-    environment_state: str,
-    role: str,
-    code: str,
-    queue_rank: int,
-    open_gap_pct: float,
-    auction_drift_pct: float,
-) -> bool:
-    """Reject repair-day 20cm/30cm front candidates after auction decay."""
-    is_large_limit = code.split(".", 1)[0].startswith(("300", "301", "688", "689"))
-    return (
-        environment_state == "修复"
-        and role != "市场核心"
-        and is_large_limit
-        and queue_rank <= 2
-        and open_gap_pct >= 5.0
-        and auction_drift_pct <= -3.0
-    )
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, default=INPUT)
@@ -126,9 +110,6 @@ def main() -> None:
     lookup = {(row.trade_date, row.stock_code): row._asdict() for row in auction.itertuples(index=False)}
 
     for item in records:
-        if item.get("replay_status") == "tday_queue_frozen_with_repair_challenger_slice":
-            continue
-
         auction_records = []
         executable = []
         for queue_rank, code in enumerate(item["original_queue"], 1):
@@ -147,7 +128,8 @@ def main() -> None:
             # This is an execution gate, not a new candidate ranker. The
             # original T-day queue order remains unchanged.
             tday_row = next(
-                audit for audit in item["candidate_audit"] if audit["candidate"] == code
+                (audit for audit in item.get("candidate_audit", []) if audit.get("candidate") == code),
+                {},
             )
             # The T-day close is stored in the input-derived audit only as
             # evidence text, so use the queue's source-independent open gap
@@ -157,7 +139,8 @@ def main() -> None:
             close_price = float(close_rows.iloc[0]["close"])
             stock_name = str(close_rows.iloc[0]["stock_name"])
             node_row = next(
-                node for node in item.get("node_role_records", []) if node["candidate"] == code
+                (node for node in item.get("node_role_records", []) if node.get("candidate") == code),
+                {},
             )
             gap = (open_price / close_price - 1.0) * 100.0
             drift = (float(raw["auction_price_0924"]) / float(raw["auction_price_0920"]) - 1.0) * 100.0
@@ -168,14 +151,6 @@ def main() -> None:
             )
             role = str(tday_row.get("role", ""))
             board_count = int(float(node_row.get("board_count", 0) or 0))
-            high_volatility_auction_decay = (
-                daily_limit_ratio(code, stock_name) >= Decimal("0.20")
-                and matches_exchange_price(float(raw["auction_price_0920"]), limit_up_price)
-                and drift <= -5.0
-                and gap >= 10.0
-                and item.get("environment_state") in {"分歧", "退潮", "分歧转退潮"}
-                and role != "市场核心"
-            )
             weak_repair_spike = weak_repair_last_minute_spike(
                 str(item.get("environment_state", "")),
                 str(item.get("sentiment_state", "")),
@@ -191,33 +166,22 @@ def main() -> None:
                 queue_rank,
                 gap,
             )
-            repair_20cm_decay = repair_20cm_auction_decay(
-                str(item.get("environment_state", "")),
-                role,
-                code,
-                queue_rank,
-                gap,
-                drift,
-            )
             survives = (
-                not limit_open_untradeable
-                and not high_volatility_auction_decay
+                is_mainboard_tradeable(code)
+                and not limit_open_untradeable
                 and not weak_repair_spike
                 and not repair_high_gap
-                and not repair_20cm_decay
                 and gap >= -2.0
                 and float(raw["open_volume_hands"]) > 0
                 and drift > -8.0
             )
             if limit_open_untradeable:
                 status = "不可交易"
-            elif high_volatility_auction_decay:
-                status = "不及预期"
+            elif not is_mainboard_tradeable(code):
+                status = "不可交易"
             elif weak_repair_spike:
                 status = "不及预期"
             elif repair_high_gap:
-                status = "不及预期"
-            elif repair_20cm_decay:
                 status = "不及预期"
             elif gap >= 5.0:
                 status = "超预期"
@@ -237,24 +201,20 @@ def main() -> None:
                     "auction_drift_pct": drift,
                     "limit_up_price": limit_up_price,
                     "limit_open_untradeable": limit_open_untradeable,
-                    "high_volatility_auction_decay": high_volatility_auction_decay,
                     "weak_repair_last_minute_spike": weak_repair_spike,
                     "repair_high_gap_overextension": repair_high_gap,
-                    "repair_20cm_auction_decay": repair_20cm_decay,
                     "decision": "保留并执行" if survives else "跳过并递补",
                     "reason": (
                         "竞价可成交且未破坏T日买入前提"
                         if survives
                         else "T+1开盘价达到涨停价，无法证明开盘可成交，按原始队列顺延"
                         if limit_open_untradeable
-                        else "20cm或30cm非市场核心从9:20涨停预期明显回落，双分歧或退潮中高开不等于超预期"
-                        if high_volatility_auction_decay
+                        else "非主板股票不属于用户可交易范围，候选池硬门已剔除"
+                        if not is_mainboard_tradeable(code)
                         else "弱修复中的非市场核心在9:24后末分钟急拉且高开，按竞价虚强处理"
                         if weak_repair_spike
                         else "修复环境中非市场核心3板以上且队列前两位高开至少5%，按高位溢价过度处理"
                         if repair_high_gap
-                        else "修复环境中非市场核心20cm或30cm前排高开后竞价回落至少3%，按高预期塌缩处理"
-                        if repair_20cm_decay
                         else "竞价跌破失效边界"
                     ),
                 }
